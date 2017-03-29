@@ -1,8 +1,10 @@
 ﻿import * as req from "request-promise-native";
 import { RequestAPI } from "request";
 
-import { IRequester } from "./requester";
-import Requester = require("src/requester");
+import {
+    IRequester,
+    RequesterOptions,
+    StringTable } from "./requester";
 
 export class DefaultRequester implements IRequester {
     private req: RequestAPI<any, any, any>;
@@ -12,18 +14,18 @@ export class DefaultRequester implements IRequester {
         this.req = req.defaults( { jar: this.jar } );
     }
 
-    setDefaultOptions( opts: Requester.RequesterOptions ) {
+    setDefaultOptions( opts: RequesterOptions ) {
         this.req = req.defaults( {
             jar: this.jar,
             ...opts
         } );
     }
 
-    get( url: string, opts?: Requester.RequesterOptions ): Promise<string> {
+    get( url: string, opts?: RequesterOptions ): Promise<string> {
         return this.req.get( url, opts );
     }
 
-    postForm( url: string, form: Requester.StringTable, opts?: Requester.RequesterOptions ): Promise<string> {
+    postForm( url: string, form: StringTable, opts?: RequesterOptions ): Promise<string> {
         return this.req.post( url, {
             form,
             ...opts

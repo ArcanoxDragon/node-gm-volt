@@ -1,11 +1,10 @@
-import { IRequester } from "./requester";
-import Requester = require("src/requester");
+import { IRequester, RequesterOptions, StringTable } from "./requester";
 export declare class DefaultRequester implements IRequester {
     private req;
     private jar;
     constructor();
-    setDefaultOptions(opts: Requester.RequesterOptions): void;
-    get(url: string, opts?: Requester.RequesterOptions): Promise<string>;
-    postForm(url: string, form: Requester.StringTable, opts?: Requester.RequesterOptions): Promise<string>;
+    setDefaultOptions(opts: RequesterOptions): void;
+    get(url: string, opts?: RequesterOptions): Promise<string>;
+    postForm(url: string, form: StringTable, opts?: RequesterOptions): Promise<string>;
     getCookie(url: string, name: string): string;
 }
