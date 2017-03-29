@@ -4,8 +4,10 @@ import * as query from "./myvolt/query";
 import * as web from "./web";
 
 import { ChargeStatus, Credentials } from ".";
+import { IRequester } from "./requester";
 
-export async function init() {
+export async function init( requester: IRequester ) {
+    web.init( requester );
     await web.get( "/" );
 }
 
@@ -23,14 +25,14 @@ export async function login( credentials: Credentials ): Promise<void> {
     let sessionCookie = web.getCookie( "JSESSIONID" );
     if ( !sessionCookie ) throw new Error( "Session cookie does not exist" );
 
-    let result = await web.postFormJsonP( `/web/portal/home;jsessionid=${ sessionCookie.value }`, form, { qs: query.validateLogin } );
+    let result = await web.postFormJsonP( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.validateLogin } );
 
     if ( result.result === "invalid" ) throw new Error( "Invalid credentials" );
 
     delete form.formName;
     form.userAction = "login";
 
-    await web.postForm( `/web/portal/home;jsessionid=${ sessionCookie.value }`, form, { qs: query.login } );
+    await web.postForm( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.login } );
 }
 
 export async function getChargeStatus(): Promise<ChargeStatus> {
@@ -54,7 +56,7 @@ export async function getChargeStatus(): Promise<ChargeStatus> {
     let chargeStatus: boolean | ChargeStatus = null;
 
     while ( doContinue ) {
-        chargeStatus = await pollChargeStatus( sessionCookie.value, chargeStatus === null );
+        chargeStatus = await pollChargeStatus( sessionCookie, chargeStatus === null );
 
         if ( chargeStatus === false ) {
             await delay( 1000 );

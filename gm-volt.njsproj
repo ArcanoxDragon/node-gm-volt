@@ -31,6 +31,7 @@
     <Content Include="typings\modules\form-data\typings.json" />
     <Content Include="typings\modules\request-promise-native\typings.json" />
     <Content Include="typings\modules\request\typings.json" />
+    <TypeScriptCompile Include="src\defaultRequester.ts" />
     <TypeScriptCompile Include="src\index.ts" />
     <Compile Include="gulpfile.js" />
     <TypeScriptCompile Include="src\config.ts" />
@@ -41,7 +42,7 @@
     <TypeScriptCompile Include="src\myvolt\query\login.ts" />
     <TypeScriptCompile Include="src\myvolt\query\polling.ts" />
     <TypeScriptCompile Include="src\myvolt\query\validateLogin.ts" />
-    <TypeScriptCompile Include="src\types\chargeStatus.d.ts" />
+    <TypeScriptCompile Include="src\requester.ts" />
     <TypeScriptCompile Include="src\types\credentials.d.ts" />
     <TypeScriptCompile Include="src\web.ts" />
     <Content Include="typings\globals\node\typings.json" />
@@ -56,7 +57,6 @@
     <Folder Include="src\myvolt\" />
     <Folder Include="src\myvolt\headers\" />
     <Folder Include="src\myvolt\query\" />
-    <Folder Include="src\types\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\modules\" />
     <Folder Include="typings\modules\chalk\" />

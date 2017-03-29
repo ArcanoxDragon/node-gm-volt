@@ -1,43 +1,33 @@
-﻿import * as req from "request-promise-native";
-
-import config from "./config";
+﻿import config from "./config";
 import headers from "./myvolt/headers";
+import { IRequester, StringTable } from "./requester";
 
-declare module "request" {
-    interface Cookie {
-        key: string;
-        value: string;
-    }
-}
-
-export interface FormData {
-    [ key: string ]: string
-}
+let r: IRequester = null;
 
 const baseUrl = `${ config.protocol }://${ config.domain }/`;
-const jar = req.jar();
 const jspMatch = /^jsonp\d+\((.*)\)$/i;
-const r = req.defaults( {
-    baseUrl,
-    gzip: true,
-    headers,
-    jar
-} );
 
-export function get( url: string, otherOptions?: any ): req.RequestPromise {
-    return r( url, otherOptions );
+export function init( requester: IRequester ) {
+    r = requester;
+    r.setDefaultOptions( {
+        baseUrl,
+        headers
+    } );
 }
 
-export function postForm( url: string, formData: FormData, otherOptions?: any ): req.RequestPromise {
-    let opts = {
-        form: formData,
-        ...otherOptions
-    };
-
-    return r.post( url, opts );
+function assertInit() {
+    if ( !r ) throw new Error( "Web module not initialized" );
 }
 
-export async function postFormJsonP( url: string, formData: FormData, otherOptions?: any ): Promise<any> {
+export function get( url: string, otherOptions?: any ): Promise<string> {
+    return r.get( url, otherOptions );
+}
+
+export function postForm( url: string, formData: StringTable, otherOptions?: any ): Promise<string> {
+    return r.postForm( url, formData, otherOptions );
+}
+
+export async function postFormJsonP( url: string, formData: StringTable, otherOptions?: any ): Promise<any> {
     let result = await postForm( url, formData, otherOptions );
     let match = result.match( jspMatch );
 
@@ -50,11 +40,6 @@ export async function postFormJsonP( url: string, formData: FormData, otherOptio
     return json;
 }
 
-export function getCookie( name: string ): any {
-    let cookies = jar.getCookies( baseUrl );
-    let cookie = cookies.find( c => c.key.toLowerCase() === name.toLowerCase() );
-
-    if ( !cookie ) return null;
-
-    return cookie;
+export function getCookie( name: string ): string {
+    return r.getCookie( baseUrl, name );
 }
