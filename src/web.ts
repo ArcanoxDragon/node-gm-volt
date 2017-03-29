@@ -29,6 +29,7 @@ export function postForm( url: string, formData: StringTable, otherOptions?: any
 
 export async function postFormJsonP( url: string, formData: StringTable, otherOptions?: any ): Promise<any> {
     let result = await postForm( url, formData, otherOptions );
+    console.log( "jsonp:", result );
     let match = result.match( jspMatch );
 
     if ( !match ) throw new Error( "Invalid JSONP response" );
