@@ -1,4 +1,5 @@
 ﻿export * from "./gm";
+export * from "./requester";
 
 export interface ChargeStatus {
     pluggedIn: boolean;
