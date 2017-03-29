@@ -16,6 +16,7 @@ export class DefaultRequester implements IRequester {
 
     setDefaultOptions( opts: RequesterOptions ) {
         this.req = req.defaults( {
+            gzip: true,
             jar: this.jar,
             ...opts
         } );
