@@ -3,6 +3,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "baseUrl": ".",
+        "declaration": true,
         "lib": [
             "dom",
             "es6",

@@ -64,6 +64,7 @@
     <Folder Include="typings\globals\cheerio\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\modules\" />
+    <Folder Include="typings\modules\chalk\" />
     <Folder Include="typings\modules\form-data\" />
     <Folder Include="typings\modules\request-promise-native\" />
     <Folder Include="typings\modules\request\" />

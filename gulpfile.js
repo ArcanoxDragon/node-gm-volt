@@ -1,7 +1,9 @@
 var del = require( "del" );
 var gulp = require( "gulp" );
+var merge = require( "merge-stream" );
 var path = require( "path" );
 var sourcemaps = require( "gulp-sourcemaps" );
+var typings = require( "gulp-typings" );
 var ts = require( "gulp-typescript" );
 var uglify = require( "gulp-uglify" );
 
@@ -14,23 +16,36 @@ function compileTsProject( tsProject, outputDir ) {
         .pipe( sourcemaps.init() )
         .pipe( tsProject() );
 
-    return tsResult.js
-        .pipe( debug
-               ? sourcemaps.write( {
-                   // Return relative source map root directories per file.
-                   sourceRoot: function( file ) {
-                       var sourceFile = path.join( file.cwd, file.sourceMap.file );
-                       return path.relative( path.dirname( sourceFile ), file.cwd );
-                   }
-               } )
-               : uglify() )
+    var dtsStream = tsResult.dts
         .pipe( gulp.dest( outputDir ) );
+
+    var tsStream = tsResult.js
+        .pipe( debug ?
+            sourcemaps.write( {
+                // Return relative source map root directories per file.
+                sourceRoot: function( file ) {
+                    var sourceFile = path.join( file.cwd, file.sourceMap.file );
+                    return path.relative( path.dirname( sourceFile ), file.cwd );
+                }
+            } ) :
+            uglify() )
+        .pipe( gulp.dest( outputDir ) );
+
+    return merge( dtsStream, tsStream );
 }
+
+gulp.task( "typings", function() {
+    return gulp
+        .src( "./typings.json" )
+        .pipe( typings() );
+} );
 
 gulp.task( "clean", function() {
     return del( [
         "build/**/*.js",
-        "build/**"
+        "build/**",
+        "typings/**/*",
+        "typings/*"
     ] );
 } );
 
@@ -39,7 +54,7 @@ gulp.task( "build-ts", function() {
 } );
 
 gulp.task( "build", gulp.parallel( "build-ts" ) );
-gulp.task( "rebuild", gulp.series( "clean", "build" ) );
+gulp.task( "rebuild", gulp.series( "clean", "typings", "build" ) );
 
 gulp.task( "watch", gulp.series( "build", function() {
     gulp.watch( "src/**/*", gulp.series( "build-ts" ) );
