@@ -3,6 +3,8 @@ import * as delay from "promise-delay";
 import * as query from "./myvolt/query";
 import * as web from "./web";
 
+import { ChargeStatus, Credentials } from ".";
+
 export async function init() {
     await web.get( "/" );
 }
