@@ -1,0 +1,1 @@
+"use strict";exports.__esModule=!0,exports.default=require("../config.json");

@@ -44,9 +44,7 @@
     <TypeScriptCompile Include="src\types\chargeStatus.d.ts" />
     <TypeScriptCompile Include="src\types\credentials.d.ts" />
     <TypeScriptCompile Include="src\web.ts" />
-    <Content Include="typings.json" />
     <Content Include="typings\globals\node\typings.json" />
-    <TypeScriptCompile Include="typings\globals\cheerio\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\index.d.ts" />
     <TypeScriptCompile Include="typings\modules\form-data\index.d.ts" />
@@ -59,9 +57,6 @@
     <Folder Include="src\myvolt\headers\" />
     <Folder Include="src\myvolt\query\" />
     <Folder Include="src\types\" />
-    <Folder Include="typings\" />
-    <Folder Include="typings\globals\" />
-    <Folder Include="typings\globals\cheerio\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\modules\" />
     <Folder Include="typings\modules\chalk\" />

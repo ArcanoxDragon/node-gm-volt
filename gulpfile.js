@@ -3,7 +3,6 @@ var gulp = require( "gulp" );
 var merge = require( "merge-stream" );
 var path = require( "path" );
 var sourcemaps = require( "gulp-sourcemaps" );
-var typings = require( "gulp-typings" );
 var ts = require( "gulp-typescript" );
 var uglify = require( "gulp-uglify" );
 
@@ -34,12 +33,6 @@ function compileTsProject( tsProject, outputDir ) {
     return merge( dtsStream, tsStream );
 }
 
-gulp.task( "typings", function() {
-    return gulp
-        .src( "./typings.json" )
-        .pipe( typings() );
-} );
-
 gulp.task( "clean", function() {
     return del( [
         "build/**/*.js",
@@ -54,7 +47,7 @@ gulp.task( "build-ts", function() {
 } );
 
 gulp.task( "build", gulp.parallel( "build-ts" ) );
-gulp.task( "rebuild", gulp.series( "clean", "typings", "build" ) );
+gulp.task( "rebuild", gulp.series( "clean", "build" ) );
 
 gulp.task( "watch", gulp.series( "build", function() {
     gulp.watch( "src/**/*", gulp.series( "build-ts" ) );

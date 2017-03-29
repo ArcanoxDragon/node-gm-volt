@@ -1,27 +1,32 @@
 {
-  "name": "gm-volt",
-  "private": true,
-  "version": "1.0.0",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
-  "scripts": {
-    "build": "gulp --color rebuild",
-    "install": "typings install && npm run build"
-  },
-  "author": "Arcanox",
-  "license": "ISC",
-  "dependencies": {
-    "cheerio": "^0.22.0",
-    "del": "^2.2.2",
-    "gulp": "github:gulpjs/gulp#4.0",
-    "gulp-sourcemaps": "^2.5.0",
-    "gulp-typescript": "^3.1.6",
-    "gulp-typings": "^2.0.4",
-    "gulp-uglify": "^2.1.2",
-    "merge-stream": "^1.0.1",
-    "promise-delay": "^2.1.0",
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.3",
-    "typescript": "^2.3.0-dev.20170307"
-  }
+    "name": "gm-volt",
+    "private": true,
+    "version": "1.0.0",
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
+    "scripts": {
+        "build": "gulp --color rebuild"
+    },
+    "author": "Arcanox",
+    "license": "ISC",
+    "dependencies": {
+        "@types/cheerio": "^0.22.1",
+        "@types/request": "^0.0.42",
+        "@types/request-promise-native": "^1.0.2",
+        "cheerio": "^0.22.0",
+        "promise-delay": "^2.1.0",
+        "typescript": "^2.3.0-dev.20170307"
+    },
+    "devDependencies": {
+        "del": "^2.2.2",
+        "gulp": "github:gulpjs/gulp#4.0",
+        "gulp-sourcemaps": "^2.5.0",
+        "gulp-typescript": "^3.1.6",
+        "gulp-uglify": "^2.1.2",
+        "merge-stream": "^1.0.1"
+    },
+    "peerDependencies": {
+        "request": "^2.81.0",
+        "request-promise-native": "^1.0.3"
+    }
 }

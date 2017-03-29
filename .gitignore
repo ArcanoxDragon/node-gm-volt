@@ -7,7 +7,6 @@
 
 # Artifact folders
 bin/
-build/
 obj/
 
 # Visual Studio options directories
