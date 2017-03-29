@@ -28,6 +28,7 @@ export async function login( credentials: Credentials ): Promise<void> {
     let result = await web.postFormJsonP( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.validateLogin } );
 
     if ( result.result === "invalid" ) throw new Error( "Invalid credentials" );
+    if ( result.result === "showCaptcha" ) throw new Error( "Captcha presented...you must log into the website in a browser on this device first" );
 
     delete form.formName;
     form.userAction = "login";
