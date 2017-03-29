@@ -1,0 +1,20 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "lib": [
+            "dom",
+            "es6",
+            "es5"
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "build/"
+    },
+    "include": [
+        "src/*.ts",
+        "src/**/*.ts",
+        "typings/index.d.ts"
+    ]
+}
