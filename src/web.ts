@@ -20,14 +20,17 @@ function assertInit() {
 }
 
 export function get( url: string, otherOptions?: any ): Promise<string> {
+    assertInit();
     return r.get( url, otherOptions );
 }
 
 export function postForm( url: string, formData: StringTable, otherOptions?: any ): Promise<string> {
+    assertInit();
     return r.postForm( url, formData, otherOptions );
 }
 
 export async function postFormJsonP( url: string, formData: StringTable, otherOptions?: any ): Promise<any> {
+    assertInit();
     let result = await postForm( url, formData, otherOptions );
     let match = result.match( jspMatch );
 
@@ -41,5 +44,6 @@ export async function postFormJsonP( url: string, formData: StringTable, otherOp
 }
 
 export function getCookie( name: string ): string {
+    assertInit();
     return r.getCookie( baseUrl, name );
 }
