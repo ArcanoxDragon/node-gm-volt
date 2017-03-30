@@ -4,9 +4,7 @@
     "version": "1.0.0",
     "main": "build/index.js",
     "types": "build/index.d.ts",
-    "scripts": {
-        "build": "gulp --color rebuild"
-    },
+    "scripts": {},
     "author": "Arcanox",
     "license": "ISC",
     "dependencies": {
