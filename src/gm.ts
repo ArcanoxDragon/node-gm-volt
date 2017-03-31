@@ -6,12 +6,18 @@ import * as web from "./web";
 import { ChargeStatus, Credentials } from ".";
 import { IRequester } from "./requester";
 
+function newError( type, message ) {
+    let error = new Error( message );
+    error.name = type;
+    return error;
+}
+
 export async function init( requester: IRequester ) {
     web.init( requester );
     await web.get( "/" );
 }
 
-export async function login( credentials: Credentials ): Promise<void> {
+export async function login( credentials: Credentials ): Promise < void > {
     let form = {
         user: credentials.username,
         password: credentials.password,
@@ -23,12 +29,12 @@ export async function login( credentials: Credentials ): Promise<void> {
     };
 
     let sessionCookie = web.getCookie( "JSESSIONID" );
-    if ( !sessionCookie ) throw new Error( "Session cookie does not exist" );
+    if ( !sessionCookie ) throw newError( "MissingCookie", "Session cookie does not exist" );
 
     let result = await web.postFormJsonP( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.validateLogin } );
 
-    if ( result.result === "invalid" ) throw new Error( "Invalid credentials" );
-    if ( result.result === "showCaptcha" ) throw new Error( "Captcha presented...you must log into the website in a browser on this device first" );
+    if ( result.result === "invalid" ) throw newError( "InvalidCredentials", "Invalid credentials" );
+    if ( result.result === "showCaptcha" ) throw newError( "Captcha", "Captcha presented...you must log into the website in a browser on this device first" );
 
     delete form.formName;
     form.userAction = "login";
@@ -36,9 +42,9 @@ export async function login( credentials: Credentials ): Promise<void> {
     await web.postForm( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.login } );
 }
 
-export async function getChargeStatus(): Promise<ChargeStatus> {
+export async function getChargeStatus(): Promise < ChargeStatus > {
     let sessionCookie = web.getCookie( "JSESSIONID" );
-    if ( !sessionCookie ) throw new Error( "Session cookie does not exist" );
+    if ( !sessionCookie ) throw newError( "MissingCookie", "Session cookie does not exist" );
 
     let form = {
         initiate: "true"
@@ -47,11 +53,11 @@ export async function getChargeStatus(): Promise<ChargeStatus> {
     let result = await web.postForm( "/web/portal/home", form, { qs: query.polling } );
     let $ = cheerio.load( result );
 
-    if ( !$ ) throw new Error( "Charging status could not be retrieved" );
+    if ( !$ ) throw newError( "StatusError", "Charging status could not be retrieved" );
 
     let error = $( "status" ).attr( "error" );
 
-    if ( error ) throw new Error( `OnStar returned error: ${ error }` );
+    if ( error ) throw newError( "OnStarError", `OnStar returned error: ${ error }` );
 
     let doContinue = true;
     let chargeStatus: boolean | ChargeStatus = null;
@@ -69,22 +75,20 @@ export async function getChargeStatus(): Promise<ChargeStatus> {
     return chargeStatus as ChargeStatus;
 }
 
-async function pollChargeStatus( chargingSessionId: string, initial: boolean ): Promise<boolean | ChargeStatus> {
-    let form = initial
-                   ? {
-                       initiate: "true",
-                       chargingSessionId
-                   }
-                   : {
-                       checkstatus: "chargingdata",
-                       chargingSessionId
-                   };
+async function pollChargeStatus( chargingSessionId: string, initial: boolean ): Promise < boolean | ChargeStatus > {
+    let form = initial ? {
+        initiate: "true",
+        chargingSessionId
+    } : {
+        checkstatus: "chargingdata",
+        chargingSessionId
+    };
 
     let result = await web.postForm( "/web/portal/home", form, { qs: query.charging } );
     let $ = cheerio.load( result );
     let status = $( "status" );
 
-    if ( !status ) throw new Error( "Unable to poll charging status" );
+    if ( !status ) throw newError( "StatusError", "Unable to poll charging status" );
 
     let statusCode = parseInt( status.attr( "value" ) );
 
@@ -99,6 +103,6 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
             estDoneBy: $( "estFullCharge" ).attr( "value" )
         } as ChargeStatus;
     } else {
-        throw new Error( `Unexpected status code: ${ statusCode }` );
+        throw newError( "StatusError", `Unexpected status code: ${ statusCode }` );
     }
 }

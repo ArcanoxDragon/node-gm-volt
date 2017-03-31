@@ -19,26 +19,36 @@ function assertInit() {
     if ( !r ) throw new Error( "Web module not initialized" );
 }
 
-export function get( url: string, otherOptions?: any ): Promise<string> {
+export function get( url: string, otherOptions ? : any ): Promise < string > {
     assertInit();
     return r.get( url, otherOptions );
 }
 
-export function postForm( url: string, formData: StringTable, otherOptions?: any ): Promise<string> {
+export function postForm( url: string, formData: StringTable, otherOptions ? : any ): Promise < string > {
     assertInit();
     return r.postForm( url, formData, otherOptions );
 }
 
-export async function postFormJsonP( url: string, formData: StringTable, otherOptions?: any ): Promise<any> {
+export async function postFormJsonP( url: string, formData: StringTable, otherOptions ? : any ): Promise < any > {
     assertInit();
     let result = await postForm( url, formData, otherOptions );
     let match = result.match( jspMatch );
 
-    if ( !match ) throw new Error( "Invalid JSONP response" );
+    if ( !match ) {
+        let err = new Error( "Invalid JSONP response" );
+        err["response"] = result;
+        require("fs").writeFileSync("response.html",result);
+        throw err;
+    }
 
     let json = JSON.parse( match[ 1 ] );
 
-    if ( !json ) throw new Error( "Invalid JSONP response" );
+    if ( !json ) {
+        let err = new Error( "Invalid JSONP response" );
+        err["response"] = result;
+        require("fs").writeFileSync("response.html",result);
+        throw err;
+    }
 
     return json;
 }

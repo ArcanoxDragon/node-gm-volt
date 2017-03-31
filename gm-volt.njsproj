@@ -57,6 +57,10 @@
     <Folder Include="src\myvolt\" />
     <Folder Include="src\myvolt\headers\" />
     <Folder Include="src\myvolt\query\" />
+    <Folder Include="src\types\" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\globals\" />
+    <Folder Include="typings\globals\cheerio\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\modules\" />
     <Folder Include="typings\modules\chalk\" />
