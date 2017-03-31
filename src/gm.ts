@@ -6,9 +6,10 @@ import * as web from "./web";
 import { ChargeStatus, Credentials } from ".";
 import { IRequester } from "./requester";
 
-function newError( type, message ) {
+function newError( type: string, message: string, params ? : any ) {
     let error = new Error( message );
     error.name = type;
+    Object.assign( error, params );
     return error;
 }
 
@@ -22,8 +23,8 @@ export async function login( credentials: Credentials ): Promise < void > {
         user: credentials.username,
         password: credentials.password,
         remember: "on",
-        captchaId: "",
-        captchaAnswer: "",
+        captchaId: credentials.captchaId || "",
+        captchaAnswer: credentials.captchaAnswer || "",
         formName: "AccountLoginForm",
         userAction: "validateUserCredentials"
     };
@@ -34,7 +35,9 @@ export async function login( credentials: Credentials ): Promise < void > {
     let result = await web.postFormJsonP( `/web/portal/home;jsessionid=${ sessionCookie }`, form, { qs: query.validateLogin } );
 
     if ( result.result === "invalid" ) throw newError( "InvalidCredentials", "Invalid credentials" );
-    if ( result.result === "showCaptcha" ) throw newError( "Captcha", "Captcha presented...you must log into the website in a browser on this device first" );
+    if ( result.result === "showCaptcha" ) throw newError( "Captcha", "Captcha presented...you must log into the website in a browser on this device first", {
+        ...result
+    } );
 
     delete form.formName;
     form.userAction = "login";
@@ -85,6 +88,7 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
     };
 
     let result = await web.postForm( "/web/portal/home", form, { qs: query.charging } );
+    console.log( result );
     let $ = cheerio.load( result );
     let status = $( "status" );
 
@@ -95,13 +99,15 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
     if ( statusCode === 2 || ( statusCode === 0 && status.attr( "connect" ) === "true" ) ) {
         return false;
     } else if ( statusCode === 0 ) {
-        return {
+        return <ChargeStatus > {
             pluggedIn: $( "pluggedIn" ).attr( "value" ) === "plugged",
             evRange: parseInt( $( "estEVRange" ).attr( "value" ) ),
             totalRange: parseInt( $( "estTotRange" ).attr( "value" ) ),
             chargePercent: parseInt( $( "currCharge" ).attr( "value" ) ),
             estDoneBy: $( "estFullCharge" ).attr( "value" )
-        } as ChargeStatus;
+        };
+    } else if ( statusCode === 3 ) { // this seems to mean "you are rate limited"
+        throw newError( "RateLimit", "Your account is being rate-limited. Try again in a while." );
     } else {
         throw newError( "StatusError", `Unexpected status code: ${ statusCode }` );
     }

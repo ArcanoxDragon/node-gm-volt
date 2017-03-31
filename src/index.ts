@@ -12,4 +12,6 @@ export interface ChargeStatus {
 export interface Credentials {
     username: string;
     password: string;
+    captchaId?: string;
+    captchaAnswer?: string;
 }

@@ -37,7 +37,6 @@ export async function postFormJsonP( url: string, formData: StringTable, otherOp
     if ( !match ) {
         let err = new Error( "Invalid JSONP response" );
         err["response"] = result;
-        require("fs").writeFileSync("response.html",result);
         throw err;
     }
 
@@ -46,7 +45,6 @@ export async function postFormJsonP( url: string, formData: StringTable, otherOp
     if ( !json ) {
         let err = new Error( "Invalid JSONP response" );
         err["response"] = result;
-        require("fs").writeFileSync("response.html",result);
         throw err;
     }
 
