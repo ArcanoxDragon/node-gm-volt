@@ -108,8 +108,8 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
             chargePercent: parseInt( $( "currCharge" ).attr( "value" ) ),
             estDoneBy: $( "estFullCharge" ).attr( "value" )
         };
-    } else if ( statusCode === 3 ) { // this seems to mean "you are rate limited"
-        throw newError( "RateLimit", "Your account is being rate-limited. Try again in a while." );
+    } else if ( statusCode === 3 ) {
+        throw newError( "SessionExpired", "Your session is expired. Please log out and back in and try again." );
     } else {
         throw newError( "StatusError", `Unexpected status code: ${ statusCode }` );
     }
