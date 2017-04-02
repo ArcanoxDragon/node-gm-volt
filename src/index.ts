@@ -4,7 +4,9 @@ export * from "./requester";
 export interface ChargeStatus {
     pluggedIn: boolean;
     evRange: number;
+    evUnit: string;
     totalRange: number;
+    totalUnit: string;
     chargePercent: number;
     estDoneBy: string;
 }

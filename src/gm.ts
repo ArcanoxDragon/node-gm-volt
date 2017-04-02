@@ -102,7 +102,9 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
         return <ChargeStatus > {
             pluggedIn: $( "pluggedIn" ).attr( "value" ) === "plugged",
             evRange: parseInt( $( "estEVRange" ).attr( "value" ) ),
+            evUnit: $( "estEVRange" ).attr( "unit" ),
             totalRange: parseInt( $( "estTotRange" ).attr( "value" ) ),
+            totalUnit: $( "estTotRange" ).attr( "unit" ),
             chargePercent: parseInt( $( "currCharge" ).attr( "value" ) ),
             estDoneBy: $( "estFullCharge" ).attr( "value" )
         };
