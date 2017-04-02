@@ -49,18 +49,15 @@ export async function getChargeStatus(): Promise < ChargeStatus > {
     let sessionCookie = web.getCookie( "JSESSIONID" );
     if ( !sessionCookie ) throw newError( "MissingCookie", "Session cookie does not exist" );
 
-    let form = {
-        initiate: "true"
+    let form: any = {
+        initiate: "false",
+        chargeSessionId: sessionCookie
     };
 
-    let result = await web.postForm( "/web/portal/home", form, { qs: query.polling } );
-    let $ = cheerio.load( result );
+    let $ = await runPostRequest( form, query.firstCharging );
 
-    if ( !$ ) throw newError( "StatusError", "Charging status could not be retrieved" );
-
-    let error = $( "status" ).attr( "error" );
-
-    if ( error ) throw newError( "OnStarError", `OnStar returned error: ${ error }` );
+    form = { initiate: "true" };
+    $ = await runPostRequest( form, query.polling );
 
     let doContinue = true;
     let chargeStatus: boolean | ChargeStatus = null;
@@ -79,17 +76,18 @@ export async function getChargeStatus(): Promise < ChargeStatus > {
 }
 
 async function pollChargeStatus( chargingSessionId: string, initial: boolean ): Promise < boolean | ChargeStatus > {
-    let form = initial ? {
-        initiate: "true",
-        chargingSessionId
-    } : {
+    let form: any = {};
+
+    if ( initial ) form.initiate = "true";
+
+    let $ = await runPostRequest( form, query.polling );
+
+    form = {
         checkstatus: "chargingdata",
         chargingSessionId
     };
 
-    let result = await web.postForm( "/web/portal/home", form, { qs: query.charging } );
-    console.log( result );
-    let $ = cheerio.load( result );
+    $ = await runPostRequest( form, query.charging );
     let status = $( "status" );
 
     if ( !status ) throw newError( "StatusError", "Unable to poll charging status" );
@@ -113,4 +111,17 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
     } else {
         throw newError( "StatusError", `Unexpected status code: ${ statusCode }` );
     }
+}
+
+async function runPostRequest( form: any, qs: any ) {
+    let result = await web.postForm( "/web/portal/home", form, { qs } );
+    let $ = cheerio.load( result );
+
+    if ( !$ ) throw newError( "StatusError", "Status could not be retrieved" );
+
+    let error = $( "status" ).attr( "error" );
+
+    if ( error ) throw newError( "OnStarError", `OnStar returned error: ${ error }` );
+
+    return $;
 }
