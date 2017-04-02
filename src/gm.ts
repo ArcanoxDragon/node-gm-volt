@@ -56,9 +56,6 @@ export async function getChargeStatus(): Promise < ChargeStatus > {
 
     let $ = await runPostRequest( form, query.firstCharging );
 
-    form = { initiate: "true" };
-    $ = await runPostRequest( form, query.polling );
-
     let doContinue = true;
     let chargeStatus: boolean | ChargeStatus = null;
 
@@ -66,7 +63,7 @@ export async function getChargeStatus(): Promise < ChargeStatus > {
         chargeStatus = await pollChargeStatus( sessionCookie, chargeStatus === null );
 
         if ( chargeStatus === false ) {
-            await delay( 1000 );
+            await delay( 3000 );
         } else {
             doContinue = false;
         }
@@ -94,7 +91,7 @@ async function pollChargeStatus( chargingSessionId: string, initial: boolean ): 
 
     let statusCode = parseInt( status.attr( "value" ) );
 
-    if ( statusCode === 2 || ( statusCode === 0 && status.attr( "connect" ) === "true" ) ) {
+    if ( statusCode === 1 || statusCode === 2 || ( statusCode === 0 && status.attr( "connect" ) === "true" ) ) {
         return false;
     } else if ( statusCode === 0 ) {
         return <ChargeStatus > {
